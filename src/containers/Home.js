@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import Search from "../views/Search";
 import Weather from "../views/Weather";
+import CityList from "../cityList.json";
 /*
 - render empty form
 - ask for location
@@ -15,31 +16,63 @@ import Weather from "../views/Weather";
 */
 function Home({ match }) {
   const [loading, isLoading] = useState(false);
-  const [weather, setWeather] = useState([]);
+  const [weather, setWeather] = useState({});
   const [lat, setLatitude] = useState("");
   const [long, setLongitude] = useState("");
-  const [city, setCity] = useState("");
-  const { latitude, longitude, timestamp, accuracy, error } = usePosition(
-    true,
-    { enableHighAccuracy: true }
-  );
+  const [location, setCity] = useState("");
+  const [cityCode, setCityCode] = useState("");
 
-  async function onSubmit(e) {
+  const [searchBy, updateSearchParams] = useState("coordinates");
+
+  const { latitude, longitude, error } = usePosition();
+
+  function fetchCityCode(location) {
+    const code = CityList.find(city => {
+      return city.name.toLowerCase() === location.toLowerCase();
+    });
+    if (code) {
+      setCityCode(code.id);
+    }
+  }
+
+  async function onSubmitForm(e) {
     e.preventDefault();
-
-    const result = await fetch(
-      `http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID=${
-        process.env
-      }`
-    );
-    let weather = await result.json();
-    // weather = formatTacoResults(weather);
-
-    return weather;
+    let result;
+    let weather = {};
+    if (searchBy === "city") {
+      fetchCityCode(location);
+      debugger;
+      if (cityCode.length > 1) {
+        result = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?id=${cityCode}&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+        );
+      } else {
+        result = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?q=${location},us&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+        );
+      }
+    } else {
+      result = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+      );
+    }
+    weather = await result.json();
+    debugger;
+    if (weather.cod === "200") {
+      setWeather(weather);
+    }
   }
 
   useEffect(() => {
-    function initialSearchParams() {}
+    function initialLatLongParams() {
+      console.log("initialLatLongParams");
+      setLatitude(latitude);
+      setLongitude(longitude);
+    }
+
+    if (latitude && longitude && lat.length < 1 && long.length < 1) {
+      initialLatLongParams();
+    }
   });
 
   return (
@@ -55,14 +88,25 @@ function Home({ match }) {
           path={match.path}
           render={() => (
             <Search
-              onSubmit={onSubmit}
+              onSubmitForm={onSubmitForm}
               longitude={longitude}
               latitude={latitude}
+              lat={lat}
+              long={long}
+              setLatitude={setLatitude}
+              setLongitude={setLongitude}
+              location={location}
+              fetchCityCode={fetchCityCode}
+              searchBy={searchBy}
+              updateSearchParams={updateSearchParams}
             />
           )}
         />
       </Main>
       <Route path={`${match.path}/:id`} component={Weather} />
+      {weather.hasOwnProperty("city") && (
+        <Weather weather={weather} match={match} />
+      )}
     </Outer>
   );
 }
