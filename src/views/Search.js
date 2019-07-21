@@ -1,22 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
+import Coordinates from "./Coordinates";
+import CityState from "./CityState";
 
-function Search({ onSubmit, latitude, longitude }) {
-  const [searchBy, updateSearchParams] = useState("coordinates");
-
-  useEffect(() => {
-    // function initialSearchParams() {
-  });
-
+const Search = ({
+  onSubmitForm,
+  latitude,
+  longitude,
+  lat,
+  long,
+  setLatitude,
+  setLongitude,
+  location,
+  setCity,
+  fetchCityCode,
+  searchBy,
+  updateSearchParams
+}) => {
   return (
     <SearchContainer>
-      <Form onSubmit={onSubmit}>
+      <Form
+        onSubmit={e => {
+          if (searchBy === "city") {
+            fetchCityCode(location);
+          }
+          onSubmitForm(e);
+        }}
+      >
         <Label htmlFor="searchBy">
           Search By
           <Select
             id="searchBy"
             value={searchBy}
-            placeholder="Add an searchBy"
             onChange={e => {
               updateSearchParams(e.target.value);
             }}
@@ -29,41 +44,28 @@ function Search({ onSubmit, latitude, longitude }) {
             <option value="city">City, State</option>
           </Select>
         </Label>
-        <Label htmlFor="lat">
-          Latitude
-          <Input
-            id="lat"
-            value={lat}
-            type="text"
-            onChange={e => {
-              setLatitude(e.target.value);
-            }}
-            onBlur={e => {
-              setLatitude(e.target.value);
-            }}
-            disabled={!searchBy.length}
+        {searchBy === "coordinates" ? (
+          <Coordinates
+            lat={lat}
+            long={long}
+            latitude={latitude}
+            longitude={longitude}
+            setLatitude={setLatitude}
+            setLongitude={setLongitude}
+            searchBy={searchBy}
           />
-        </Label>
-        <Label htmlFor="long">
-          Longitude
-          <Input
-            id="long"
-            value={long}
-            type="text"
-            onChange={e => {
-              setLongitude(e.target.value);
-            }}
-            onBlur={e => {
-              setLongitude(e.target.value);
-            }}
-            disabled={!searchBy.length}
+        ) : (
+          <CityState
+            searchBy={searchBy}
+            location={location}
+            setCity={setCity}
           />
-        </Label>
+        )}
         <Button>Submit</Button>
       </Form>
     </SearchContainer>
   );
-}
+};
 
 const SearchContainer = styled.div`
   padding-top: 3%;
@@ -81,35 +83,29 @@ const Form = styled.form`
   align-items: center;
   padding: 10px;
 `;
-
 const Label = styled.label`
   font-size: 1rem;
   text-align: left;
   width: 100%;
+  padding: 10px;
 `;
-
 const Select = styled.select`
+  padding-top: 15px;
   border: 1px solid green;
   font-size: 0.9rem;
   text-align: center;
   margin-left: 15px;
-  width: auto;
+  width: 100%;
   height: auto;
   word-break: keep-all;
-`;
-
-const Input = styled(Select)`
   padding: 10px;
-  width: 100%;
 `;
 
-const BtnContainer = styled.div`
+const Button = styled.button`
   height: 40px;
   width: 110px;
-`;
-
-const Button = styled(BtnContainer)`
   align-self: center;
+  background-color: pink;
 `;
 const BtnContainerEnd = styled.div`
   height: 40px;
