@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-
+import { usePosition } from "use-position";
 import styled from "styled-components";
+import Search from "../views/Search";
 /*
 - render empty form
 - ask for location
@@ -10,11 +11,41 @@ import styled from "styled-components";
 - graph details
 */
 function Home({ match }) {
+  const [loading, isLoading] = useState(false);
+  const [weather, setWeather] = useState([]);
+
+  const { latitude, longitude, timestamp, accuracy, error } = usePosition(
+    true,
+    { enableHighAccuracy: true }
+  );
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    const result = await fetch(
+      `http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID=${
+        process.env
+      }`
+    );
+    let weather = await result.json();
+    // weather = formatTacoResults(weather);
+
+    return weather;
+  }
+
+  useEffect(() => {
+    function initialSearchParams() {}
+  });
+
   return (
     <Outer>
-      <HeaderText>Header text</HeaderText>
+      <HeaderText>MEGAN'S WEATHER APP</HeaderText>
+      <Subtext>
+        Rain, rain, go away.. Check the weather to see if you should return to
+        bed or go for a hike.
+      </Subtext>
       <Main>
-        <text>Main</text>
+        <Search onSubmit={onSubmit} longitude={longitude} latitude={latitude} />
       </Main>
     </Outer>
   );
