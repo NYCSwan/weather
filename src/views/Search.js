@@ -107,10 +107,5 @@ const Button = styled.button`
   align-self: center;
   background-color: pink;
 `;
-const BtnContainerEnd = styled.div`
-  height: 40px;
-  width: 110px;
-  align-self: flex-end;
-`;
 
 export default Search;

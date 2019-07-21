@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Chart from "./Chart";
+import moment from "moment";
 
 function Weather({ match, weather }) {
+  const [sortedWeatherData, setWeatherData] = useState([]);
+
+  useEffect(() => {
+    function sortWeather() {
+      const data = weather.list.map(data => {
+        // {date: 'Mon, 2nd', uv: 400, amt: 2400},
+        const mom = moment(data.dt).format("Do, h:mm");
+
+        let newData = { date: mom, uv: data.main.temp };
+        return newData;
+      });
+      setWeatherData(data);
+    }
+    if (sortedWeatherData.length < 1) {
+      sortWeather();
+    }
+  });
+
   return (
     <WeatherContainer key={match.params.id}>
-      <HeaderText>{weather.city.name.toUpperCase()}</HeaderText>
+      <HeaderText>{weather.city.name.toUpperCase()} WEATHER</HeaderText>
+      <Chart weather={sortedWeatherData} />
     </WeatherContainer>
   );
 }
@@ -14,6 +35,9 @@ const WeatherContainer = styled.div`
   width: 80%;
   display: flex;
   flex-flow: column wrap;
+  margin-bottom: 40px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const HeaderText = styled.h3`

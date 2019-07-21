@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { usePosition } from "use-position";
 import { Route } from "react-router-dom";
 import styled from "styled-components";
-
 import Search from "../views/Search";
 import Weather from "../views/Weather";
 import CityList from "../cityList.json";
@@ -15,7 +14,6 @@ import CityList from "../cityList.json";
 - graph details
 */
 function Home({ match }) {
-  const [loading, isLoading] = useState(false);
   const [weather, setWeather] = useState({});
   const [lat, setLatitude] = useState("");
   const [long, setLongitude] = useState("");
@@ -24,6 +22,7 @@ function Home({ match }) {
 
   const [searchBy, updateSearchParams] = useState("coordinates");
 
+  // TODO: error handling
   const { latitude, longitude, error } = usePosition();
 
   function fetchCityCode(location) {
@@ -39,25 +38,32 @@ function Home({ match }) {
     e.preventDefault();
     let result;
     let weather = {};
+    const key = process.env.REACT_APP_WEATHER_API_KEY;
+    console.log("key", key);
     if (searchBy === "city") {
       fetchCityCode(location);
-      debugger;
       if (cityCode.length > 1) {
         result = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?id=${cityCode}&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+          `https://api.openweathermap.org/data/2.5/forecast?id=${cityCode}&&APPID=${
+            process.env.REACT_APP_WEATHER_API_KEY
+          }`
         );
       } else {
         result = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${location},us&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+          `https://api.openweathermap.org/data/2.5/forecast?q=${location},us&&APPID=${
+            process.env.REACT_APP_WEATHER_API_KEY
+          }`
         );
       }
     } else {
       result = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&&APPID=ca6a93a63a36481c73f6b9b28736e3f1`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&&APPID=${
+          process.env.REACT_APP_WEATHER_API_KEY
+        }`
       );
     }
     weather = await result.json();
-    debugger;
+
     if (weather.cod === "200") {
       setWeather(weather);
     }
@@ -98,6 +104,7 @@ function Home({ match }) {
               location={location}
               fetchCityCode={fetchCityCode}
               searchBy={searchBy}
+              setCity={setCity}
               updateSearchParams={updateSearchParams}
             />
           )}
@@ -120,11 +127,6 @@ const Outer = styled.div`
   justify-content: center;
   align-items: center;
   overflow: scroll;
-`;
-
-const Img = styled.img`
-  height: auto;
-  width: 30%;
 `;
 
 const HeaderText = styled.h3`
