@@ -18,6 +18,8 @@ c. present the user the temperature, humidity, and pressure in the location they
 
 ### TBD
 
+- refactor state to use context
+
 ##
 
 - Routes
