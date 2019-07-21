@@ -39,7 +39,7 @@ function Home({ match }) {
     let result;
     let weather = {};
     const key = process.env.REACT_APP_WEATHER_API_KEY;
-    console.log("key", key);
+
     if (searchBy === "city") {
       fetchCityCode(location);
       if (cityCode.length > 1) {
