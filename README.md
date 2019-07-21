@@ -18,7 +18,10 @@ c. present the user the temperature, humidity, and pressure in the location they
 
 ### TBD
 
-## -
+##
 
--
+- Routes
+- api call
+- location
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
