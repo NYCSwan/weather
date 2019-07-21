@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { usePosition } from "use-position";
+import { Route } from "react-router-dom";
 import styled from "styled-components";
+
 import Search from "../views/Search";
+import Weather from "../views/Weather";
 /*
 - render empty form
 - ask for location
@@ -13,7 +16,9 @@ import Search from "../views/Search";
 function Home({ match }) {
   const [loading, isLoading] = useState(false);
   const [weather, setWeather] = useState([]);
-
+  const [lat, setLatitude] = useState("");
+  const [long, setLongitude] = useState("");
+  const [city, setCity] = useState("");
   const { latitude, longitude, timestamp, accuracy, error } = usePosition(
     true,
     { enableHighAccuracy: true }
@@ -45,8 +50,19 @@ function Home({ match }) {
         bed or go for a hike.
       </Subtext>
       <Main>
-        <Search onSubmit={onSubmit} longitude={longitude} latitude={latitude} />
+        <Route
+          exact
+          path={match.path}
+          render={() => (
+            <Search
+              onSubmit={onSubmit}
+              longitude={longitude}
+              latitude={latitude}
+            />
+          )}
+        />
       </Main>
+      <Route path={`${match.path}/:id`} component={Weather} />
     </Outer>
   );
 }
@@ -57,7 +73,7 @@ const Outer = styled.div`
   display: flex;
   margin-top: 5rem;
   flex-flow: column nowrap;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   overflow: scroll;
 `;
@@ -81,21 +97,11 @@ const Subtext = styled.h3`
 
 const Main = styled.div`
   display: flex;
-  flex-flow: row-reverse wrap;
+  flex-flow: column wrap;
   width: 90%;
   height: 100%;
   justify-content: center';
   margin-bottom: 4%;
-`;
-
-const SearchContainer = styled.div`
-  height: 100%;
-  width: 50%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  overflow: visible;
 `;
 
 export default Home;
