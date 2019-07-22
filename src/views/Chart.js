@@ -32,6 +32,18 @@ function Chart({ weather }) {
         stroke="#ff7300"
         activeDot={{ r: 8 }}
       />
+      <Line
+        type="monotone"
+        dataKey="humidity"
+        stroke="#dd1900"
+        activeDot={{ r: 8 }}
+      />
+      <Line
+        type="monotone"
+        dataKey="pressure"
+        stroke="#123545"
+        activeDot={{ r: 8 }}
+      />
     </LineChart>
   );
 }

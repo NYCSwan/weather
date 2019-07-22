@@ -40,8 +40,8 @@ const Search = ({
             }}
             disabled={!searchBy.length}
           >
-            <option value="coordinates">Lat/Long Coordinates</option>
-            <option value="city">City, State</option>
+            <Option value="coordinates">Lat/Long Coordinates</Option>
+            <Option value="city">City, State</Option>
           </Select>
         </Label>
         {searchBy === "coordinates" ? (
@@ -89,6 +89,7 @@ const Label = styled.label`
   width: 100%;
   padding: 10px;
 `;
+
 const Select = styled.select`
   padding-top: 15px;
   border: 1px solid green;
@@ -101,11 +102,17 @@ const Select = styled.select`
   padding: 10px;
 `;
 
+const Option = styled.option`
+  padding: 10px;
+  color: mediumgray;
+`;
+
 const Button = styled.button`
   height: 40px;
-  width: 110px;
+  width: 80%;
   align-self: center;
-  background-color: pink;
+  background-color: navy;
+  color: #eeeeee;
 `;
 
 export default Search;
