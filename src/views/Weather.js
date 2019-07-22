@@ -9,10 +9,15 @@ function Weather({ match, weather }) {
   useEffect(() => {
     function sortWeather() {
       const data = weather.list.map(data => {
-        // {date: 'Mon, 2nd', uv: 400, amt: 2400},
+        // {date: 'Mon, 2nd', uv: 400, humidity: 35, pressure: 100},
         const mom = moment(data.dt).format("Do, h:mm");
 
-        let newData = { date: mom, uv: data.main.temp };
+        let newData = {
+          date: mom,
+          uv: data.main.temp,
+          humidity: data.main.humidity,
+          pressure: data.main.pressure
+        };
         return newData;
       });
       setWeatherData(data);
